@@ -1,8 +1,17 @@
 package shop.mtcoding.blogv2.board;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import shop.mtcoding.blogv2.user.User;
 
@@ -12,6 +21,49 @@ public class BoardRepositoryTest {
 
     @Autowired
     private BoardRepository boardRepository;
+
+    @Test
+    public void findAll_paging_test() throws JsonProcessingException {
+        Pageable pageable = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
+        Page<Board> boardPG = boardRepository.findAll(pageable);
+        // JSON으로 보는 게 편함
+
+        // objectMapper는 boardPg객체의 getter를 호출하면서 json으로 만든다
+        ObjectMapper om = new ObjectMapper();
+        String json = om.writeValueAsString(boardPG); // 자바 객체를 JSON으로 변환
+        System.out.println(json);
+        // 이렇게 해서 Fail On Empty라는 오류가 나온다면 Eager로 바꿔주기
+        // console에 나온 것을 Online JSON Viewer에 출력해보기
+
+        // 오류해결 첫번째
+
+    }
+
+    @Test
+    public void mFindAll_test() {
+        boardRepository.mFindAll();
+        // 유저 정보가 프로젝션이 안된거
+        // 세로로 컬럼을 고르는 것 - 프로젝션
+    }
+
+    @Test
+    public void findAll_test() {
+        System.out.println("조회 직전");
+        List<Board> boardList = boardRepository.findAll();
+        System.out.println("조회 후 : Lazy");
+        // 연관된 user까지 조회됨, 그래서 select를 3번이나 날림
+        // 행 : 5개 -> 객체 : 5개
+        // 각행 : Board(id=1, title = 제목1, content=내용1, created_at= 날짜, User(id=1)) =
+        // lazy(pk만 땡김)
+        System.out.println(boardList.get(0).getId()); // 1 ( 조회 x )
+        System.out.println(boardList.get(0).getUser().getId()); // 1 ( 조회 x )
+
+        // lazyloding 지연로딩 - 없으니까 알아서 채워줌
+        // 영속화된 객체에 null값을 찾으려고 하면, 조회가 일어남
+        // 연관된 객체에 null을 참조하려고 하면 없으니까 조회
+        System.out.println(boardList.get(0).getUser().getUsername()); // null -> ssar
+        // 필요한 상황에만 땡겨옴
+    }
 
     @Test
     public void save_test() {

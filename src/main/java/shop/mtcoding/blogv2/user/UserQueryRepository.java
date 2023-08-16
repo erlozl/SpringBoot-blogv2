@@ -31,5 +31,6 @@ public class UserQueryRepository {
         // 이건 영속성컨텍스트에서 찾는 거임, 캐싱을 하는 것, 그렇기 때문에 쿼리가 하나밖에 안 날라감
         // 통신을 줄여줌
         // 쿼리 1개만 날라감
+        // object.mapping을 해주는 것임
     }
 }

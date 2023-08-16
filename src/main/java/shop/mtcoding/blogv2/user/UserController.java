@@ -55,6 +55,10 @@ public class UserController {
         return Script.href("/");
     }
 
+    // 브라우저 GET /logout 요청을 함 ( request 1)
+    // 서버는 / 주소를 응답의 헤더에 담음 ( Location 이라는 키 값을 담음), 상태코드 302 (재요청 프로토콜)
+    // 브라우저는 GET / 로 재요청 ( request 2)
+    // index 페이지 응답받고 렌더링함
     @GetMapping("/logout")
     public String logout() {
         session.invalidate();

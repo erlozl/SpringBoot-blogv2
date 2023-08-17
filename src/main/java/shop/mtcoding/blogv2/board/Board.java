@@ -36,7 +36,7 @@ public class Board {
     private String content;
 
     // fetch는 프로젝션하는 방식 제공
-    @ManyToOne(fetch = FetchType.EAGER) // board만 조회
+    @ManyToOne(fetch = FetchType.LAZY) // board만 조회
     // @ManyToOne(fetch = FetchType.EAGER) Eager은 미리 조회를 다한다는 것임, board와 user 다
     private User user; // 1+N
     // LAZY를 붙이면 이 객체를 조회안한다는 뜻, 모순의 불일치가 안 생김

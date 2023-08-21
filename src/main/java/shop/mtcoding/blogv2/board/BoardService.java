@@ -46,12 +46,19 @@ public class BoardService {
     }
 
     public Board 상세보기(Integer id) {
-        // board만 가져오면 됨
-        try {
-
-        } catch (Exception e) {
+        // // board만 가져오면 됨
+        // Optional<Board> boardOP = boardRepository.findById(id);
+        // if (boardOP.isPresent()) {
+        // return boardOP.get();
+        // } else {
+        // throw new RuntimeException(id + "는 찾을 수 없습니다");
+        // }
+        Optional<Board> boardOP = boardRepository.mFindByIdJoinRepliesInUser(id);
+        if (boardOP.isPresent()) {
+            return boardOP.get();
+        } else {
+            throw new RuntimeException(id + "는 찾을 수 없습니다");
         }
-        return boardRepository.findById(id).get();
     }
 
     public Board 게시글수정목록(Integer id) {

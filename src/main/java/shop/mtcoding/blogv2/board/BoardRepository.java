@@ -1,9 +1,11 @@
 package shop.mtcoding.blogv2.board;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 // @Repository
@@ -22,5 +24,14 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     // fetch를 붙여야 *를 한다 전체를 프로젝션한다는 것임
     // fetch = 연관된 객체 안에 들어가서 그 내용들을 다 하나하나 뽑아냄
     List<Board> mFindAll();
+
+    @Query("select b from Board b join fetch b.user where b.id = :id")
+    Board mFindById(@Param("id") Integer id);
+
+    @Query("select b from Board b left join fetch b.replies r left join fetch r.user ru where b.id = :id")
+    // 게시물 작성자는 화면에 안보이니까 안 넣기
+    // 댓글 작성자는 보이니까 넣기
+    Optional<Board> mFindByIdJoinRepliesInUser(@Param("id") Integer id);
+    // jpql쿼리사용, dto가 필요없음
 
 }

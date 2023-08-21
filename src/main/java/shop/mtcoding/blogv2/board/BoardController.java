@@ -24,6 +24,9 @@ public class BoardController {
     private BoardService boardService;
 
     @Autowired
+    private BoardRepository boardRepository;
+
+    @Autowired
     private HttpSession session;
 
     @GetMapping("/test")
@@ -39,6 +42,13 @@ public class BoardController {
         model.addAttribute("board", board);
 
         return "board/detail";
+    }
+
+    @GetMapping("test/board/{id}")
+    public @ResponseBody Board testDetail(@PathVariable Integer id) {
+        // DTO에 옮겨줘야 함
+        Board board = boardRepository.mFindByIdJoinRepliesInUser(id).get();
+        return board;
     }
 
     // invoke, reflection

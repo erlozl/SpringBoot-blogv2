@@ -7,14 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import shop.mtcoding.blogv2._core.error.ex.MyApiException;
+import shop.mtcoding.blogv2._core.error.ex.MyException;
+import shop.mtcoding.blogv2._core.util.ApiUtil;
 import shop.mtcoding.blogv2._core.util.Script;
 
 @Controller
 public class UserController {
 
     // 유효성 검사는 Controller에서 - 단일 책임의 원칙
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired // DI 컴포넌트 스캔 중
     private UserService userService;
@@ -46,10 +53,9 @@ public class UserController {
     @PostMapping("/login")
     public @ResponseBody String login(UserRequest.LoginDTO loginDTO) {
         User sessionUser = userService.로그인(loginDTO);
-        if (sessionUser == null) {
-            return Script.back("로그인 실패");
-            // 적었던 게 남아있으므로 back 사용
-        }
+        // if (sessionUser == null) {
+        // throw new MyException("로그인 실패");
+        // } 서비스에서 비즈니스 로직이 날라왔기 때문에 필요가 없음
         session.setAttribute("sessionUser", sessionUser);
 
         return Script.href("/");
@@ -83,6 +89,17 @@ public class UserController {
         session.setAttribute("sessionUser", user);
         // 그 다음 세션 동기화
         return "redirect:/";
+    }
+
+    @GetMapping("/api/check")
+    public @ResponseBody ApiUtil<String> check(String username) {
+        // User user = userRepository.findByUsername(username);
+        User user = userService.유저찾기(username);
+
+        if (user != null) {
+            throw new MyApiException("아이디를 사용하실 수 없습니다");
+        }
+        return new ApiUtil<String>(true, "아이디를 사용하실 수 있습니다");
     }
 
 }

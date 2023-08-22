@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -57,7 +58,10 @@ public class Board {
     @JsonIgnoreProperties({ "board" }) // 내부를 얘기하는 것임 = 양방향매핑 때 무한루프를 막기 위해서 달아야함
     // (메시지컨버터 발동하면 모든 애들한테 get을 다 때림)
     // 그 객체 안에 있는 필드를 json으로 직렬화하지말라는 뜻
+    // @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade =
+    // CascadeType.ALL) // (mappedBy = "board") fk가 아니라는 설정을 해줘야 함
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY) // (mappedBy = "board") fk가 아니라는 설정을 해줘야 함
+
     private List<Reply> replies = new ArrayList<>();
 
     @CreationTimestamp

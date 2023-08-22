@@ -54,11 +54,14 @@ public class BoardController {
     // invoke, reflection
     @GetMapping("/")
     public String index(@RequestParam(defaultValue = "0") Integer page,
-            HttpServletRequest request) {
+            @RequestParam(defaultValue = "") String keyword, HttpServletRequest request) {
+
         Page<Board> boardPG = boardService.게시글목록보기(page);
         request.setAttribute("boardPG", boardPG);
         request.setAttribute("prevPage", boardPG.getNumber() - 1);
         request.setAttribute("nextPage", boardPG.getNumber() + 1);
+        request.setAttribute("keyword", keyword);
+        boardService.키워드(page, keyword);
         return "index";
     }
 

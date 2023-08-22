@@ -3,7 +3,7 @@
 <div class="container p-5">
 
     <div class="mb-2 d-flex justify-content-end">
-        <form class="d-flex" action="#">
+        <form class="d-flex" action="/" method="get" onsubmit="return valid()">
             <input id="keyword" class="form-control me-2" type="text" name="keyword" placeholder="Search" required>
             <button class="btn btn-primary" type="submit">Search</button>
         </form>
@@ -28,7 +28,12 @@
         <li class="page-item {{#boardPG.last}} disabled {{/boardPG.last}}"><a class="page-link"
                 href="?page={{nextPage}}">Next</a></li>
     </ul>
-
 </div>
 
+<script>
+    function valid() {
+        let keywordSearch = document.querySelector("#keyword").value;
+        console.log(keywordSearch);      
+    }
+</script>
 {{> layout/footer}}

@@ -14,7 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import shop.mtcoding.blogv2._core.error.ex.MyException;
 import shop.mtcoding.blogv2.board.BoardRequest.UpdateDTO;
+import shop.mtcoding.blogv2.reply.Reply;
+import shop.mtcoding.blogv2.reply.ReplyRepository;
 import shop.mtcoding.blogv2.user.User;
 
 // 1. 비지니스 로직 처리 (핵심로직)
@@ -28,6 +31,9 @@ import shop.mtcoding.blogv2.user.User;
 public class BoardService {
     @Autowired
     private BoardRepository boardRepository;
+
+    @Autowired
+    private ReplyRepository replyRepository;
 
     @Transactional
     public void 글쓰기(BoardRequest.SaveDTO saveDTO, int sessionUserId) {
@@ -57,7 +63,7 @@ public class BoardService {
         if (boardOP.isPresent()) {
             return boardOP.get();
         } else {
-            throw new RuntimeException(id + "는 찾을 수 없습니다");
+            throw new MyException(id + "는 찾을 수 없습니다");
         }
     }
 
@@ -73,16 +79,27 @@ public class BoardService {
             Board board = boardOP.get();
             board.setTitle(updateDTO.getTitle());
             board.setContent(updateDTO.getContent());
+        } else {
+            throw new MyException(id + "를 찾을 수 없습니다");
         }
     } // flush(더티체킹)
 
+    // 삭제하기 전 조회를 한번 하자
     @Transactional
     public void 삭제(Integer id) {
+        List<Reply> replies = replyRepository.findByBoardId(id);
+        for (Reply reply : replies) {
+            reply.setBoard(null);
+            replyRepository.save(reply);
+        }
         try {
             boardRepository.deleteById(id);
-        } catch (Exception e) {
-            throw new RuntimeException("6번은 없음");
+        } catch (MyException e) {
+            throw new MyException("6번은 없음");
             // throwable ㅡ> exception ㅡ> RuntimeException
         }
+    }
+
+    public void 키워드(Integer page, String keyword) {
     }
 }

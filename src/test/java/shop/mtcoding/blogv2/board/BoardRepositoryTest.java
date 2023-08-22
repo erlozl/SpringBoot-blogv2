@@ -26,22 +26,23 @@ public class BoardRepositoryTest {
     @Test
     public void mFindByIdJoinRepliesInUser_test() {
         Board board = boardRepository.mFindByIdJoinRepliesInUser(1).get();
-        System.out.println("board : id : " + board.getId());
-        System.out.println("board : title : " + board.getTitle());
-        System.out.println("board : content : " + board.getContent());
-        System.out.println("board : createAt : " + board.getCreatedAt());
-        System.out.println("===============================");
-        // System.out.println("board in user : id : " + board.getUser().getId());
-        // System.out.println("board in user : username : " +
-        // board.getUser().getUsername());
-        // 쿼리로 user를 들고 온 적 없지만, get으로 들고왔기 때문에 lazy loading 됨
-        // 캐싱이 되니까 조회를 안함
-        board.getReplies().stream().forEach(r -> {
-            System.out.println("board in replies : id : " + r.getId());
-            System.out.println("board in replies : comment : " + r.getComment());
-            System.out.println("board in replies in user : id : " + r.getUser().getId());
-            System.out.println("board in replies in user : username : " + r.getUser().getUsername());
-        });
+        // System.out.println("board : id : " + board.getId());
+        // System.out.println("board : title : " + board.getTitle());
+        // System.out.println("board : content : " + board.getContent());
+        // System.out.println("board : createAt : " + board.getCreatedAt());
+        // System.out.println("===============================");
+        // // System.out.println("board in user : id : " + board.getUser().getId());
+        // // System.out.println("board in user : username : " +
+        // // board.getUser().getUsername());
+        // // 쿼리로 user를 들고 온 적 없지만, get으로 들고왔기 때문에 lazy loading 됨
+        // // 캐싱이 되니까 조회를 안함
+        // board.getReplies().stream().forEach(r -> {
+        // System.out.println("board in replies : id : " + r.getId());
+        // System.out.println("board in replies : comment : " + r.getComment());
+        // System.out.println("board in replies in user : id : " + r.getUser().getId());
+        // System.out.println("board in replies in user : username : " +
+        // r.getUser().getUsername());
+        // });
         // 추가적인 쿼리없이 한방에 나온다면 잘 된 것임 => lazyloading 발동 안 한것
     }
 

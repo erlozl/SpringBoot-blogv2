@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import shop.mtcoding.blogv2._core.error.ex.MyException;
 import shop.mtcoding.blogv2.user.UserRequest.JoinDTO;
 import shop.mtcoding.blogv2.user.UserRequest.LoginDTO;
 import shop.mtcoding.blogv2.user.UserRequest.UpdateDTO;
@@ -45,12 +46,12 @@ public class UserService {
 
         // 1. 유저네임 검증
         if (user == null) {
-            return null;
+            throw new MyException("유저네임이 없습니다");
         }
 
         // 2. 패스워드 검증
         if (!user.getPassword().equals(loginDTO.getPassword())) {
-            return null;
+            throw new MyException("패스워드가 잘못되었습니다");
         }
 
         // 3. 로그인 성공
@@ -79,5 +80,9 @@ public class UserService {
         user.setPassword(updateDTO.getPassword());
         return user;
     } // 3. flush
+
+    public User 유저찾기(String username) {
+        return userRepository.findByUsername(username);
+    }
 
 }

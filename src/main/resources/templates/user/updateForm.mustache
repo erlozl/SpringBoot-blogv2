@@ -1,11 +1,36 @@
 {{> layout/header}}
 
+<style>
+    .card-header {
+        display: flex;
+        justify-content: center;
+    }
+    .circle_avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 100px;
+        object-fit: cover;
+    }
+    
+    #preview {
+        background: url("/images/profile.jpeg") no-repeat;
+        width: 100px;
+        height: 100px;
+        border-radius: 150px;
+        background-size: cover;
+        background-position: center;
+    }
+
+</style>
 <div class="container p-5">
 
     <div class="card">
         <div class="card-header"><b>회원수정을 해주세요</b></div>
+        <div class="card-header">
+            <img id="preview" src="/images/{{user.picUrl}}" class="circle_avatar">
+        </div>                                                                                                                                                                                                                                     
         <div class="card-body">
-            <form action="/user/update" method="post">
+            <form action="/user/update" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
                     <input type="text" class="form-control" placeholder="Enter username" name="username" value="{{user.username}}" disabled>
                 </div>
@@ -15,10 +40,46 @@
                 <div class="mb-3">
                     <input type="email" class="form-control" placeholder="Enter email" name="email" value="{{user.email}}" disabled>
                 </div>
-                <button type="submit" class="btn btn-primary form-control">회원가입수정</button>
+                <div class="mb-3">
+                    <input type="file" class="form-control" placeholder="Enter email" onchange="changePic(event)" name="pic">
+                </div>
+                <button type="submit" class="btn btn-primary form-control" >회원가입수정</button>
             </form>
         </div>
     </div>
 </div>
 
+<script>
+    // 전송코드X , 미리보기코드임
+    function changePic(el) {
+        console.log("event1" + el);
+        // 클릭, 마우스 이동, 키 입력 등의 이벤트에서 사용
+        // event
+        let f = el.srcElement.files[0];
+        console.log(f.type);
+        if(!f.type.match("image.*")){
+            alert("이미지를 등록해주세요");
+            return;
+        }
+        // IO파일, 0번지는 그 파일의 정보, 파일 객체를 찾아옴 - 현재 실제 파일은 아님 ( 하드디스크에 있음 )
+        let reader = new FileReader();
+        // readline에서 파일을 읽어옴 (하드디스크에 있는 파일을 메모리에 끌어올릴려고)
+        reader.onload = function(e2) { // 파일이 다 읽어지면 콜백됨
+            console.log("숫자 1 " + 1);
+            console.log("event2" + e2);
+            // ProgressEvent는 파일 읽기의 진행 상황을 다루는 이벤트이며, 여기서 사용되는 것은 파일이 완전히 읽혀온 후의 이벤트
+            // 파일 업로드, 데이터 다운로드 등과 같이 진행 상황이 중요한 작업에 사용
+            let previewEl = document.querySelector("#preview");
+            preview.setAttribute("src", e2.target.result);
+            // 이 이벤트의 타겟 result(파일이) 들어가있는 것을 바꿔줌
+        }
+        reader.readAsDataURL(f); // 파일 읽기, 파일을 다 읽어내면 onload함수 , IO는 이벤트 루프에 저장 
+        // 콜백함수 onload() 
+        // 다른 이벤트가 끝냈을 때 실행해주는 것 
+        // 메인스레드는 빠져나와서 이벤트 루프에 가서 확인, 다운 다돼서 onload 함수 실행되면서 
+        console.log("숫자 2" + 2);
+
+        // 자바스크립트는 사진을 base64로 인코딩해서 관리
+    }
+</script>
 {{> layout/footer}}

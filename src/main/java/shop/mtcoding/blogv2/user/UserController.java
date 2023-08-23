@@ -39,9 +39,9 @@ public class UserController {
     // M - V - C
     @PostMapping("/join")
     public String join(UserRequest.JoinDTO joinDTO) {
-        // System.out.println(joinDTO.getPic().getOriginalFilename());
-        // System.out.println(joinDTO.getPic().getSize());
-        // System.out.println(joinDTO.getPic().getContentType());
+        System.out.println(joinDTO.getPic().getOriginalFilename());
+        System.out.println(joinDTO.getPic().getSize());
+        System.out.println(joinDTO.getPic().getContentType());
 
         userService.회원가입(joinDTO);
         // service에 위임 - 여기서 내가 할 일이 아님
@@ -91,6 +91,7 @@ public class UserController {
         User user = userService.회원수정(updateDTO, sessionUser.getId());
         // 회원수정이 된 객체를 받음
         session.setAttribute("sessionUser", user);
+
         // 그 다음 세션 동기화
         return "redirect:/";
     }

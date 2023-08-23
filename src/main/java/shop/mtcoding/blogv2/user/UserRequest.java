@@ -13,6 +13,7 @@ public class UserRequest {
         private String password;
         private String email;
         private MultipartFile pic;
+        // 파일 업로드를 처리하기 위해 사용되는 인터페이스
         // 키 값 중요!
     }
 
@@ -27,5 +28,6 @@ public class UserRequest {
     @Setter
     public static class UpdateDTO {
         private String password;
+        private MultipartFile pic;
     }
 }

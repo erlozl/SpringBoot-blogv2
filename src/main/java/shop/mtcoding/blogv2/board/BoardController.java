@@ -56,11 +56,20 @@ public class BoardController {
     public String index(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "") String keyword, HttpServletRequest request) {
 
-        Page<Board> boardPG = boardService.게시글목록보기(page);
-        request.setAttribute("boardPG", boardPG);
-        request.setAttribute("prevPage", boardPG.getNumber() - 1);
-        request.setAttribute("nextPage", boardPG.getNumber() + 1);
-        request.setAttribute("keyword", keyword);
+        if (keyword.isBlank()) {
+            Page<Board> boardPG = boardService.게시글목록보기(page);
+            request.setAttribute("boardPG", boardPG);
+            request.setAttribute("prevPage", boardPG.getNumber() - 1);
+            request.setAttribute("nextPage", boardPG.getNumber() + 1);
+            request.setAttribute("keyword", keyword);
+        } else {
+            Page<Board> boardPG = boardService.게시글목록보기(keyword, page);
+            request.setAttribute("boardPG", boardPG);
+            request.setAttribute("prevPage", boardPG.getNumber() - 1);
+            request.setAttribute("nextPage", boardPG.getNumber() + 1);
+            request.setAttribute("keyword", keyword);
+        }
+
         return "index";
     }
 

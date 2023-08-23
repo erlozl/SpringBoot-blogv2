@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import shop.mtcoding.blogv2._core.error.ex.MyException;
+import shop.mtcoding.blogv2._core.util.FileWrite;
 import shop.mtcoding.blogv2._core.vo.MyPath;
 import shop.mtcoding.blogv2.user.UserRequest.JoinDTO;
 import shop.mtcoding.blogv2.user.UserRequest.LoginDTO;
@@ -36,30 +37,30 @@ public class UserService {
     // 컨트롤러에서부터 Transactional을 탈 필요 없다
     @Transactional
     public void 회원가입(JoinDTO joinDTO) {
-
-        UUID uuid = UUID.randomUUID(); // 랜덤한 해시값을 만들어줌
-        // 네트워크상에서 고유성을 보장하는 ID를 만들기 위한 표준 규약
-        // 즉, 전 세계 유일한 식별자
-        String fileName = uuid + "_" + joinDTO.getPic().getOriginalFilename();
-        // 확장자때문에 joinDTO.getPic().getOriginalFilename(); 이게 뒤로 와야함
-        System.out.println("fileName : " + fileName);
-
-        // 프로젝트 실행 파일 변경 -> blogv2-1.0.jar 자바 실행파일
-        // 해당 실행파일 경로에 images 폴더가 필요함
-        Path filePath = Paths.get(MyPath.IMG_PATH + fileName);
-        // ./ 내 서버의 현재 위치 (springboot-blog-v5폴더 내부 ) - 상대경로
-        try {
-            Files.write(filePath, joinDTO.getPic().getBytes());
-        } catch (Exception e) {
-            // 경로오류,용량부족 등
-            throw new MyException(e.getMessage());
+        String picUrl = "";
+        String originalFilename = joinDTO.getPic().getOriginalFilename();
+        if (originalFilename.isEmpty()) {
+            picUrl = "profile.jpeg";
+        } else {
+            picUrl = FileWrite.save(joinDTO.getPic(), originalFilename);
         }
+
+        // 이미지 불러오기 방법
+        // : 외부파일에서는 안되고 static 폴더에서 꺼내오는 건 가능
+        // 하지만 static은 정적인 파일이기 때문에 넣으면 안됨
+
+        // 외부경로를 static폴더처럼 쓸 수 있게 설정
+        // /images 라는 경로가 들어오면 저 경로를 찾을 수 있게 설정
+
+        System.out.println("ori : " + joinDTO.getPic().getOriginalFilename());
+        // 공백
 
         User user = User.builder()
                 .username(joinDTO.getUsername())
                 .password(joinDTO.getPassword())
                 .email(joinDTO.getEmail())
-                .picUrl(fileName)
+                .picUrl(picUrl)
+                // .picUrl(originalFilename.isEmpty() ? "profile.jpeg" : picUrl)
                 // .picUrl("./images/" + fileName)
                 // 이렇게 넣으면 위험 - 사진폴더를 변경하고 싶은데 폴더 변경이 안되기 때문에
                 // DB에는 파일에 이름만 저장
@@ -67,6 +68,7 @@ public class UserService {
                 .build();
         userRepository.save(user); // em.persist 영속화, 응답될 때 다 날려버림
         // persist 되는 것임
+
     }
 
     public User 로그인(LoginDTO loginDTO) {
@@ -104,10 +106,13 @@ public class UserService {
 
     @Transactional
     public User 회원수정(UpdateDTO updateDTO, Integer id) {
-        // 1. 조회 ( 영속화 )
         User user = userRepository.findById(id).get();
+
+        // 1. 조회 ( 영속화 )
         // 2. 변경
         user.setPassword(updateDTO.getPassword());
+        String picUrl = FileWrite.save(updateDTO.getPic(), updateDTO.getPic().getOriginalFilename());
+        user.setPicUrl(picUrl);
         return user;
     } // 3. flush
 

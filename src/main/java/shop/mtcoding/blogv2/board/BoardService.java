@@ -100,6 +100,4 @@ public class BoardService {
         }
     }
 
-    public void 키워드(Integer page, String keyword) {
-    }
 }

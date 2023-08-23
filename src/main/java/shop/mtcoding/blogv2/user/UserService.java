@@ -1,5 +1,10 @@
 package shop.mtcoding.blogv2.user;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import shop.mtcoding.blogv2._core.error.ex.MyException;
+import shop.mtcoding.blogv2._core.vo.MyPath;
 import shop.mtcoding.blogv2.user.UserRequest.JoinDTO;
 import shop.mtcoding.blogv2.user.UserRequest.LoginDTO;
 import shop.mtcoding.blogv2.user.UserRequest.UpdateDTO;
@@ -30,10 +36,34 @@ public class UserService {
     // 컨트롤러에서부터 Transactional을 탈 필요 없다
     @Transactional
     public void 회원가입(JoinDTO joinDTO) {
+
+        UUID uuid = UUID.randomUUID(); // 랜덤한 해시값을 만들어줌
+        // 네트워크상에서 고유성을 보장하는 ID를 만들기 위한 표준 규약
+        // 즉, 전 세계 유일한 식별자
+        String fileName = uuid + "_" + joinDTO.getPic().getOriginalFilename();
+        // 확장자때문에 joinDTO.getPic().getOriginalFilename(); 이게 뒤로 와야함
+        System.out.println("fileName : " + fileName);
+
+        // 프로젝트 실행 파일 변경 -> blogv2-1.0.jar 자바 실행파일
+        // 해당 실행파일 경로에 images 폴더가 필요함
+        Path filePath = Paths.get(MyPath.IMG_PATH + fileName);
+        // ./ 내 서버의 현재 위치 (springboot-blog-v5폴더 내부 ) - 상대경로
+        try {
+            Files.write(filePath, joinDTO.getPic().getBytes());
+        } catch (Exception e) {
+            // 경로오류,용량부족 등
+            throw new MyException(e.getMessage());
+        }
+
         User user = User.builder()
                 .username(joinDTO.getUsername())
                 .password(joinDTO.getPassword())
                 .email(joinDTO.getEmail())
+                .picUrl(fileName)
+                // .picUrl("./images/" + fileName)
+                // 이렇게 넣으면 위험 - 사진폴더를 변경하고 싶은데 폴더 변경이 안되기 때문에
+                // DB에는 파일에 이름만 저장
+                // 하드디스크에 저장하고 저장되어 있는 경로를 넣기
                 .build();
         userRepository.save(user); // em.persist 영속화, 응답될 때 다 날려버림
         // persist 되는 것임

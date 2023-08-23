@@ -61,7 +61,6 @@ public class BoardController {
         request.setAttribute("prevPage", boardPG.getNumber() - 1);
         request.setAttribute("nextPage", boardPG.getNumber() + 1);
         request.setAttribute("keyword", keyword);
-        boardService.키워드(page, keyword);
         return "index";
     }
 

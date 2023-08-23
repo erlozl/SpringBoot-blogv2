@@ -39,6 +39,10 @@ public class UserController {
     // M - V - C
     @PostMapping("/join")
     public String join(UserRequest.JoinDTO joinDTO) {
+        // System.out.println(joinDTO.getPic().getOriginalFilename());
+        // System.out.println(joinDTO.getPic().getSize());
+        // System.out.println(joinDTO.getPic().getContentType());
+
         userService.회원가입(joinDTO);
         // service에 위임 - 여기서 내가 할 일이 아님
 
@@ -98,6 +102,7 @@ public class UserController {
 
         if (user != null) {
             throw new MyApiException("아이디를 사용하실 수 없습니다");
+            // return new ApiUtil<String>(false, "아이디를 사용하실 수 없습니다");
         }
         return new ApiUtil<String>(true, "아이디를 사용하실 수 있습니다");
     }

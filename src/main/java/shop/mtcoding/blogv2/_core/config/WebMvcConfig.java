@@ -1,9 +1,12 @@
 package shop.mtcoding.blogv2._core.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
+
+import shop.mtcoding.blogv2._core.interceptor.LoginInterceptor;
 
 // 톰캣의 web.xml 설정파일 ㅡ> 자바 파일로 바껴서 설정됨
 // 너는 xml에 작성해, 내가 자바 파일로 바꿔줄게라는 뜻
@@ -27,6 +30,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .resourceChain(true)
                 .addResolver(new PathResourceResolver());
         // ** -> 파일명은 뭐가 들어오든 상관없다라는 뜻
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LoginInterceptor())
+                .addPathPatterns("/api/**")
+                .addPathPatterns("/user/update", "/user/updateForm")
+                .addPathPatterns("/board/**") // 발동 조건
+                .excludePathPatterns("/board/{id:[0-9]+}"); // 발동 제외
+        // session체크하는 코드 안 적어도 됨
+        // 필터링
     }
 
 }

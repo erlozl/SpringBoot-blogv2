@@ -42,7 +42,9 @@ public class UserController {
         System.out.println(joinDTO.getPic().getOriginalFilename());
         System.out.println(joinDTO.getPic().getSize());
         System.out.println(joinDTO.getPic().getContentType());
-
+        // cat02.jpg
+        // 94644
+        // image/jpeg
         userService.회원가입(joinDTO);
         // service에 위임 - 여기서 내가 할 일이 아님
 

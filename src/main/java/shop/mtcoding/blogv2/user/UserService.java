@@ -53,6 +53,7 @@ public class UserService {
         // /images 라는 경로가 들어오면 저 경로를 찾을 수 있게 설정
 
         System.out.println("ori : " + joinDTO.getPic().getOriginalFilename());
+        // ori : cat02.jpg
         // 공백
 
         User user = User.builder()

@@ -21,7 +21,11 @@ public class FileWrite {
         String fileName = uuid + "_" + originalFilename;
         // 확장자때문에 joinDTO.getPic().getOriginalFilename(); 이게 뒤로 와야함
         System.out.println("fileName : " + fileName);
-
+        // fileName : 140c6ed0-76e6-4b96-9729-e430d4025112_cat02.jpg
+        // cat02.jpg
+        // 94644
+        // image/jpeg
+        // ori : cat02.jpg
         // 프로젝트 실행 파일 변경 -> blogv2-1.0.jar 자바 실행파일
         // 해당 실행파일 경로에 images 폴더가 필요함
         Path filePath = Paths.get(MyPath.IMG_PATH + fileName);
